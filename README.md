@@ -33,3 +33,4 @@ func main() {
 ## Implementation Details
 
 This is a simple log adapter to log messages into a buffer.
+Useful for testing.

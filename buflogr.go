@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	LevelError = "ERROR "
-	LevelInfo  = "INFO "
-	LevelV     = "V[%d] "
+	LevelError = "ERROR"
+	LevelInfo  = "INFO"
+	LevelV     = "V[%d]"
 )
 
 var (
@@ -70,14 +70,14 @@ func (l *bufLogger) Enabled(level int) bool {
 // Info implements logr.Logger.Info by writing the line to the internal buffer.
 func (l *bufLogger) Info(level int, msg string, kv ...interface{}) {
 	if l.Enabled(level) {
-		l.writeLine(l.levelString(level), msg, KVFormatter(kv...))
+		l.writeLine(l.levelString(level), msg, kv...)
 	}
 }
 
 // Error implements logr.Logger.Error by prefixing the line with "ERROR" and
 // write it to the internal buffer.
 func (l *bufLogger) Error(err error, msg string, kv ...interface{}) {
-	l.writeLine(LevelError, msg, KVFormatter(kv...))
+	l.writeLine(LevelError, msg, kv...)
 }
 
 // WithValues returns a new LogSink with additional key/value pairs.
@@ -107,21 +107,27 @@ func (l *bufLogger) WithName(name string) logr.LogSink {
 }
 
 func defaultKVFormatter(kv ...interface{}) string {
-	s := strings.Join(strings.Fields(fmt.Sprint(kv)), " ")
+	s := strings.Join(strings.Fields(fmt.Sprint(kv...)), " ")
 	s = strings.TrimPrefix(s, "[")
 	s = strings.TrimSuffix(s, "]")
 	return s
 }
 
-func (l *bufLogger) writeLine(level, msg, line string) {
+func (l *bufLogger) writeLine(level, msg string, kv ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.buf.WriteString(level)
-	l.buf.WriteString(fmt.Sprintf("%s ", l.name))
-	l.buf.WriteString(fmt.Sprintf("%s ", msg))
-	l.buf.WriteString(fmt.Sprintf("%s ", KVFormatter(l.values...)))
-	l.buf.WriteString(fmt.Sprintf("%s", line))
-	if !strings.HasSuffix(line, "\n") {
+
+	var line []string
+
+	fields := []string{level, l.name, msg, KVFormatter(l.values), KVFormatter(kv)}
+	for _, f := range fields {
+		if f != "" {
+			line = append(line, f)
+		}
+	}
+
+	l.buf.WriteString(strings.Join(line, " "))
+	if !strings.HasSuffix(line[len(line)-1], "\n") {
 		l.buf.WriteRune('\n')
 	}
 }
