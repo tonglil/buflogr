@@ -41,8 +41,8 @@ func ExampleNew() {
 	// INFO MyName hello module example val1 1 val2 map[k:1]
 	// V[1] MyName you should see this module example
 	// V[2] MyName you will also see this module example
-	// ERROR MyName uh oh module example trouble true reasons [0.1 0.11 3.14]
-	// ERROR MyName goodbye module example code -1
+	// ERROR <nil> MyName uh oh module example trouble true reasons [0.1 0.11 3.14]
+	// ERROR an error occurred MyName goodbye module example code -1
 	// INFO MyName thru a helper module example
 }
 

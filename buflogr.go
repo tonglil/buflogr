@@ -77,7 +77,7 @@ func (l *bufLogger) Info(level int, msg string, kv ...interface{}) {
 // Error implements logr.Logger.Error by prefixing the line with "ERROR" and
 // write it to the internal buffer.
 func (l *bufLogger) Error(err error, msg string, kv ...interface{}) {
-	l.writeLine(LevelError, msg, kv...)
+	l.writeLine(fmt.Sprintf("%s %v", LevelError, err), msg, kv...)
 }
 
 // WithValues returns a new LogSink with additional key/value pairs.
