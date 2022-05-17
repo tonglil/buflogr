@@ -22,7 +22,7 @@ func main() {
 	var log logr.Logger = buflogr.NewWithBuffer(&buf)
 
 	log = log.WithName("my app")
-	log := log.WithValues("format", "none")
+	log = log.WithValues("format", "none")
 
 	log.Info("Logr in action!", "the answer", 42)
 
